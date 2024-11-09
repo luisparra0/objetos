@@ -1,0 +1,110 @@
+#include <ESP8266WiFi.h>
+#include <Adafruit_MQTT.h>
+#include <Adafruit_MQTT_Client.h>
+#include <DHT.h>
+
+// Definir pino do DHT11
+#define DHTPIN 2  // Conectar o pino Out no D4 do NodeMCU
+#define DHTTYPE DHT11
+DHT dht(DHTPIN, DHTTYPE);
+
+// Credenciais WiFi
+char ssid[] = "Pernalonga-2.4"; 
+char pass[] = "perninha23";    
+
+// Credenciais Adafruit IO
+#define AIO_SERVER      "io.adafruit.com"
+#define AIO_SERVERPORT  1883                   // Porta MQTT 
+#define AIO_USERNAME    "Luiz1"        // Nome de usuario Adafruit
+#define AIO_KEY         "aio_giOc98ysCUFGMqVG62IzXi1DOlAN"  // chave
+
+// Cliente WiFi e MQTT
+WiFiClient client;
+Adafruit_MQTT_Client mqtt(&client, AIO_SERVER, AIO_SERVERPORT, AIO_USERNAME, AIO_KEY);
+
+// Definir feeds para enviar temperatura e umidade ao Adafruit IO
+Adafruit_MQTT_Publish temperatureFeed = Adafruit_MQTT_Publish(&mqtt, AIO_USERNAME "/feeds/temperatura");
+Adafruit_MQTT_Publish humidityFeed = Adafruit_MQTT_Publish(&mqtt, AIO_USERNAME "/feeds/Humidade");
+
+// Timer para enviar dados periodicamente
+unsigned long lastSendTime = 0;
+const unsigned long sendInterval = 5000;  // Intervalo de envio de 5 segundos
+
+// Função para conectar ao MQTT
+void connectToMQTT() {
+  int8_t ret;
+  
+  // Tenta conectar ao servidor MQTT (Adafruit IO)
+  while ((ret = mqtt.connect()) != 0) {
+    Serial.print("Erro de conexão: ");
+    Serial.println(mqtt.connectErrorString(ret));  // Exibe o código de erro corretamente
+    mqtt.disconnect();
+    delay(5000);  // Tentar novamente a cada 5 segundos
+  }
+}
+
+// Função para ler e enviar os dados do sensor DHT11
+void sendSensorData() {
+  float h = dht.readHumidity();
+  float t = dht.readTemperature();  // Celsius
+
+  if (isnan(h) || isnan(t)) {
+    Serial.println("Falha ao ler o sensor DHT!");
+    return;
+  }
+
+  // Arredondamento
+  int t_int = round(t);
+  int h_int = round(h);
+
+  // Enviar os dados inteiros para os feeds no Adafruit IO
+  if (!temperatureFeed.publish(t_int)) {
+    Serial.println("Falha ao enviar temperatura ao Adafruit IO");
+  }
+  if (!humidityFeed.publish(h_int)) {
+    Serial.println("Falha ao enviar umidade ao Adafruit IO");
+  }
+
+  // Exibir os dados no Serial Monitor
+  Serial.print("Temperatura: ");
+  Serial.print(t_int);
+  Serial.print(" °C    Umidade: ");
+  Serial.print(h_int);
+  Serial.println(" %");
+}
+
+void setup() {
+  // Iniciar comunicação serial
+  Serial.begin(115200);
+
+  // Conectar ao Wi-Fi
+  Serial.print("Conectando ao Wi-Fi");
+  WiFi.begin(ssid, pass);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println("\nWi-Fi conectado!");
+
+  // Iniciar sensor DHT
+  dht.begin();
+
+  // Conectar ao MQTT (Adafruit IO)
+  connectToMQTT();
+}
+
+void loop() {
+  // Verificar se a conexão com o MQTT foi perdida
+  if (!mqtt.connected()) {
+    connectToMQTT();
+  }
+
+  // Manter a conexão com o MQTT
+  mqtt.ping();
+
+  // Enviar dados a cada 5 segundos
+  if (millis() - lastSendTime >= sendInterval) {
+    lastSendTime = millis();
+    sendSensorData();
+  }
+}
