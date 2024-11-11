@@ -34,3 +34,20 @@ O código possui uma estrutura que garante a reconexão automática ao servidor 
 Este projeto utiliza a pilha TCP/IP do ESP8266 para conectar-se à internet e ao servidor MQTT da Adafruit. A conexão é realizada utilizando a porta 1883, padrão do protocolo MQTT. A transmissão dos dados ocorre de forma periódica, garantindo que as informações coletadas estejam sempre atualizadas no painel do Adafruit IO, permitindo ao usuário o monitoramento remoto de temperatura e umidade através de um navegador ou aplicação móvel. Também é possível acompanhar as atualizações via aplicativo MQTT-IOT (versão IOS) ou via MQTT-Dashboard (versão ANDROID).
 
 
+## Como reproduzir o Proejto
+
+- Clone o código presente em  https://github.com/luisparra0/objetos.git  para sua máquina local.
+
+- Instalar a IDE do Arduino: Certifique-se de ter a IDE do Arduino instalada.
+
+- Instalar Bibliotecas Necessárias: Instale as bibliotecas necessárias na IDE do Arduino: ESP8266WiFi, Adafruit_MQTT, DHT.
+
+- Configurar o Código: Atualize o código com suas credenciais de Wi-Fi e as informações da sua conta Adafruit IO (nome de usuário e chave AIO).
+
+- Upload para o ESP8266: Conecte o NodeMCU ESP8266 ao seu computador e faça o upload do código utilizando a IDE do Arduino.
+
+- Montar o Hardware: Monte o circuito utilizando o sensor DHT11, protoboard e jumpers conforme descrito.
+
+- Monitorar os Dados: Acesse o painel do Adafruit IO para visualizar os dados de temperatura e umidade em tempo real.
+
+
