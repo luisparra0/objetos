@@ -18,7 +18,6 @@ O código possui uma estrutura que garante a reconexão automática ao servidor 
 
 - Fonte de Alimentação: O ESP8266 pode ser alimentado via USB (5V) ou com uma fonte de energia externa.
 
-- Impressão 3D de Caixa: Para proteger o sistema, uma caixa foi impressa em 3D. As medidas da caixa são 10x6x4 cm, com aberturas para ventilação e acesso aos pinos para reprogramação.
 
 ## Interfaces, Protocolos e Módulos de Comunicação
 
@@ -32,6 +31,6 @@ O código possui uma estrutura que garante a reconexão automática ao servidor 
 
 ## Comunicação via Internet e Protocolo MQTT
 
-Este projeto utiliza a pilha TCP/IP do ESP8266 para conectar-se à internet e ao servidor MQTT da Adafruit. A conexão é realizada utilizando a porta 1883, padrão do protocolo MQTT. A transmissão dos dados ocorre de forma periódica, garantindo que as informações coletadas estejam sempre atualizadas no painel do Adafruit IO, permitindo ao usuário o monitoramento remoto de temperatura e umidade através de um navegador ou aplicação móvel.
+Este projeto utiliza a pilha TCP/IP do ESP8266 para conectar-se à internet e ao servidor MQTT da Adafruit. A conexão é realizada utilizando a porta 1883, padrão do protocolo MQTT. A transmissão dos dados ocorre de forma periódica, garantindo que as informações coletadas estejam sempre atualizadas no painel do Adafruit IO, permitindo ao usuário o monitoramento remoto de temperatura e umidade através de um navegador ou aplicação móvel. Também é possível acompanhar as atualizações via aplicativo MQTT-IOT (versão IOS) ou via MQTT-Dashboard (versão ANDROID)
 
 
